@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA para Product Management - Workshop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --blue-dark: #0a0a2e;
+            --blue-mid: #1a1a5e;
+            --blue-accent: #3b3bff;
+            --purple: #6b4ce6;
+            --white: #ffffff;
+            --gray-light: #f5f5f7;
+            --gray-mid: #8a8a8e;
+            --gray-dark: #333;
+            --red: #e74c3c;
+            --green: #2ecc71;
+        }
+
+        .reveal {
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-size: 28px;
+            color: var(--gray-dark);
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .reveal h1 { font-size: 2.8em; font-weight: 300; letter-spacing: 0.08em; }
+        .reveal h2 { font-size: 1.8em; letter-spacing: 0.06em; }
+        .reveal h3 { font-size: 1.3em; font-weight: 600; }
+
+        /* Slide escuro (divisorias) */
+        .slide-dark {
+            background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 50%, var(--blue-accent) 100%) !important;
+            color: var(--white) !important;
+        }
+        .slide-dark h1, .slide-dark h2, .slide-dark h3, .slide-dark p, .slide-dark span {
+            color: var(--white) !important;
+        }
+        .slide-dark .subtitle {
+            font-weight: 300;
+            font-size: 0.7em;
+            opacity: 0.85;
+            margin-top: 10px;
+        }
+        .slide-dark .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--white);
+            color: var(--blue-dark);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Slide claro */
+        .slide-light {
+            background: var(--gray-light) !important;
+            color: var(--gray-dark) !important;
+        }
+        .slide-light h2 {
+            color: var(--gray-dark) !important;
+            margin-bottom: 30px;
+        }
+        .slide-light h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--blue-accent);
+            margin: 15px auto 0;
+        }
+
+        /* Cards */
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 28px 24px;
+            flex: 1;
+            min-width: 220px;
+            max-width: 320px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            text-align: left;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .card h3 {
+            font-size: 0.85em;
+            margin: 0 0 12px 0;
+            color: var(--blue-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .card p, .card li {
+            font-size: 0.72em;
+            line-height: 1.6;
+            color: var(--gray-dark);
+            margin: 4px 0;
+        }
+        .card ul {
+            padding-left: 16px;
+            margin: 8px 0;
+        }
+        .card.green-border { border-top: 4px solid var(--green); }
+        .card.red-border { border-top: 4px solid var(--red); }
+        .card.blue-border { border-top: 4px solid var(--blue-accent); }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-size: 0.6em;
+            margin-top: 30px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Destaque box */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--blue-dark), var(--blue-accent));
+            color: var(--white) !important;
+            border-radius: 12px;
+            padding: 20px 36px;
+            margin: 24px auto;
+            max-width: 85%;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .highlight-box * { color: var(--white) !important; }
+
+        /* Perguntas numeradas */
+        .question-list {
+            text-align: left;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .question-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin: 12px 0;
+            font-size: 0.82em;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--blue-accent);
+        }
+        .question-item strong {
+            color: var(--blue-accent);
+        }
+
+        /* Index list */
+        .index-list {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .index-list p {
+            font-size: 0.9em;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        /* Two columns */
+        .two-col {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .col {
+            flex: 1;
+            text-align: left;
+            max-width: 420px;
+        }
+        .col h3 {
+            text-align: center;
+        }
+
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .flow-step {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px 18px;
+            min-width: 160px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        .flow-step.you {
+            border-top: 4px solid var(--blue-accent);
+        }
+        .flow-step.ai {
+            border-top: 4px solid var(--purple);
+            background: #f0ecff;
+        }
+        .flow-step h4 {
+            font-size: 0.65em;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+        }
+        .flow-step p {
+            font-size: 0.62em;
+            margin: 0;
+            line-height: 1.4;
+        }
+        .flow-arrow {
+            font-size: 1.5em;
+            color: var(--gray-mid);
+        }
+
+        /* ROI box */
+        .roi-box {
+            background: var(--white);
+            border: 2px solid var(--blue-accent);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        .roi-big {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--blue-accent);
+        }
+        .roi-detail {
+            font-size: 0.65em;
+            color: var(--gray-mid);
+            margin: 4px 0;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .timeline-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px 16px;
+            flex: 1;
+            max-width: 220px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: left;
+            border-top: 4px solid var(--blue-accent);
+        }
+        .timeline-item h4 {
+            font-size: 0.6em;
+            color: var(--blue-accent);
+            margin: 0 0 4px;
+            text-transform: uppercase;
+        }
+        .timeline-item h3 {
+            font-size: 0.75em;
+            margin: 0 0 10px;
+        }
+        .timeline-item li {
+            font-size: 0.58em;
+            line-height: 1.5;
+            color: var(--gray-dark);
+        }
+        .timeline-item ul { padding-left: 14px; margin: 0; }
+
+        /* Activity note */
+        .activity-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin: 20px auto;
+            max-width: 75%;
+            font-size: 0.6em;
+            text-align: left;
+            color: #856404;
+        }
+        .activity-note strong { color: #856404; }
+
+        /* Fix list bullets */
+        .reveal section ul { list-style: disc; }
+        .reveal section li { margin: 4px 0; }
+
+        /* Small text */
+        .small { font-size: 0.65em; color: var(--gray-mid); }
+        .smaller { font-size: 0.55em; color: var(--gray-mid); }
+
+        /* Label tags */
+        .label {
+            display: inline-block;
+            font-size: 0.5em;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .label-you { background: #e8f0fe; color: var(--blue-accent); }
+        .label-ai { background: #f0ecff; color: var(--purple); }
+
+        /* Override reveal defaults */
+        .reveal .slides section .fragment.visible { opacity: 1; }
+        .reveal p { margin: 8px 0; line-height: 1.5; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============================================================ -->
+<!-- SLIDE 01 - CAPA -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <h1 style="font-size:2.2em; font-weight:200; letter-spacing:0.1em; margin-bottom:10px;">IA PARA PRODUCT<br>MANAGEMENT</h1>
+    <p class="subtitle" style="font-size:0.75em; opacity:0.8;">PMs que usam IA vão substituir os que não usam</p>
+    <div class="badge">Workshop Prático</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 02 - O QUE VAMOS APRENDER -->
+<!-- ============================================================ -->
+<section class="slide-light">
+    <h2>O QUE VAMOS APRENDER?</h2>
+    <div class="cards">
+        <div class="card blue-border">
+            <h3>Pensar melhor com IA</h3>
+            <p>Não terceirizar o pensamento. Usar IA como amplificador, não como muleta.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Metodologia profissional</h3>
+            <p>Spec-Driven Development aplicado a IA: Gastar tempo no começo, economizar no final.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Minutos, não semanas</h3>
+            <p>Com o ecossistema Claude: pesquisa, entrevistas, documentação e protótipos.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 03 - ÍNDICE -->
+<!-- ============================================================ -->
+<section class="slide-light">
+    <h2>ÍNDICE</h2>
+    <div class="index-list">
+        <p><strong>01.</strong> IA Ativa, não Passiva</p>
+        <p><strong>02.</strong> Parametrizando seu Claude (.md)</p>
+        <p><strong>03.</strong> Spec-Driven Development com IA</p>
+        <p><strong>04.</strong> Pesquisa de Mercado</p>
+        <p><strong>05.</strong> Entrevistas Sintéticas</p>
+        <p><strong>06.</strong> Documentação e Validação</p>
+        <p><strong>07.</strong> Priorização Inteligente</p>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 1 - MINDSET -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">01</div>
+    <h1 style="font-size:2em;">IA ATIVA, NÃO PASSIVA</h1>
+    <p class="subtitle">Antes de qualquer ferramenta: a linha de pensamento certa</p>
+</section>
+
+<!-- SLIDE 05 - PM COADJUVANTE vs PROTAGONISTA -->
+<section class="slide-light">
+    <h2>DOIS PERFIS DE PM</h2>
+    <div class="cards">
+        <div class="card red-border">
+            <h3 style="color:var(--red) !important;">PM COADJUVANTE</h3>
+            <ul>
+                <li>Copia e cola output da IA sem questionar</li>
+                <li>Perde senso crítico gradualmente</li>
+                <li>Não entende o que a IA gerou</li>
+                <li>Depende da IA para pensar</li>
+            </ul>
+        </div>
+        <div class="card green-border">
+            <h3 style="color:var(--green) !important;">PM PROTAGONISTA</h3>
+            <ul>
+                <li>Usa IA como parceiro de trabalho</li>
+                <li>Valida cada output contra seu conhecimento</li>
+                <li>Entende e questiona o raciocínio</li>
+                <li>Decide com base em dados + intuição</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 06 - 3 PERGUNTAS -->
+<section class="slide-light">
+    <h2>ANTES DE USAR QUALQUER OUTPUT</h2>
+    <p class="small">3 perguntas que mantêm seu senso crítico ativo no dia a dia com IA</p>
+    <div class="question-list">
+        <div class="question-item"><strong>01.</strong> Eu <strong>ENTENDO</strong> por que isso está certo?</div>
+        <div class="question-item"><strong>02.</strong> Eu <strong>SEI</strong> o que isso está fazendo?</div>
+        <div class="question-item"><strong>03.</strong> Isso <strong>FAZ SENTIDO</strong> com o meu conhecimento desse contexto?</div>
+    </div>
+    <div class="highlight-box">Se a resposta for NÃO para qualquer uma: pare, estude, só depois use.</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 2 - PARAMETRIZAÇÃO .MD -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">02</div>
+    <h1 style="font-size:1.7em;">PARAMETRIZANDO SEU CLAUDE</h1>
+    <p class="subtitle">Seu Claude só é tão bom quanto o contexto que você dá</p>
+</section>
+
+<!-- SLIDE 08 - O QUE SÃO .MD -->
+<section class="slide-light">
+    <h2>ARQUIVOS .MD</h2>
+    <p class="small">O manual de instruções do seu Claude</p>
+    <div class="two-col">
+        <div class="col">
+            <div class="card blue-border">
+                <h3>O que é</h3>
+                <ul>
+                    <li>CLAUDE.md = instruções permanentes para o Claude</li>
+                    <li>Define como ele deve pensar e responder</li>
+                    <li>Carregado automaticamente a cada conversa</li>
+                    <li>Funciona no Claude Code, Desktop e Cowork</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card green-border">
+                <h3>Analogia</h3>
+                <p style="font-size:0.85em; font-weight:500; text-align:center; padding: 20px 0;">
+                    "É como o onboarding de um funcionário novo, só que <strong>instantâneo</strong> e <strong>perfeito</strong>"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 09 - ESTRUTURA DO .MD -->
+<section class="slide-light">
+    <h2>ESTRUTURA DO SEU CLAUDE.MD</h2>
+    <div class="cards" style="align-items:stretch;">
+        <div class="card blue-border">
+            <h3>Contexto</h3>
+            <ul>
+                <li>Quem você é (PM de fintech, SaaS...)</li>
+                <li>Produto, mercado, público</li>
+                <li>Stack e ferramentas do time</li>
+            </ul>
+        </div>
+        <div class="card blue-border">
+            <h3>Comportamento</h3>
+            <ul>
+                <li>Tom (direto, analítico, criativo)</li>
+                <li>Formato (bullets, tabelas)</li>
+                <li>Restrições (sem jargão, citar fontes)</li>
+            </ul>
+        </div>
+        <div class="card blue-border">
+            <h3>Processo</h3>
+            <ul>
+                <li>Metodologia (SDD)</li>
+                <li>Regras de validação</li>
+                <li>Fluxo: spec > testes > implementação</li>
+            </ul>
+        </div>
+        <div class="card blue-border">
+            <h3>Conhecimento</h3>
+            <ul>
+                <li>Decisões já tomadas</li>
+                <li>Glossário do produto</li>
+                <li>Links e referências</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight-box">Quanto mais contexto estruturado, menos correção manual</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 3 - SDD -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">03</div>
+    <h1 style="font-size:1.5em;">SPEC-DRIVEN DEVELOPMENT</h1>
+    <p class="subtitle">A metodologia que evita retrabalho</p>
+</section>
+
+<!-- SLIDE 11 - FLUXO SDD -->
+<section class="slide-light">
+    <h2>SDD COM IA</h2>
+    <p class="small">Gastar tempo na especificação economiza semanas na execução</p>
+    <div class="flow">
+        <div class="flow-step you">
+            <span class="label label-you">Você</span>
+            <h4>1. SPEC</h4>
+            <p>Definir o que construir.<br>Critérios de aceitação claros.</p>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step you">
+            <span class="label label-you">Você</span>
+            <h4>2. CENÁRIOS</h4>
+            <p>Como vamos validar?<br>Definir antes de construir.</p>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step ai">
+            <span class="label label-ai">IA</span>
+            <h4>3. IA EXECUTA</h4>
+            <p>Claude gera artefatos<br>a partir da spec.</p>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step you">
+            <span class="label label-you">Você</span>
+            <h4>4. REVISÃO</h4>
+            <p>Validar contra cenários.<br>Decisão final é sua.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 12 - SDD EXEMPLO -->
+<section class="slide-light">
+    <h2>SDD EM AÇÃO</h2>
+    <p class="small">Feature: "Notificação de abandono de carrinho"</p>
+    <div class="cards" style="align-items:stretch;">
+        <div class="card" style="border-top:4px solid var(--blue-accent);">
+            <span class="label label-you">PM escreve</span>
+            <h3>Spec</h3>
+            <ul>
+                <li>Reduzir abandono em 15%</li>
+                <li>Push 30min após abandono</li>
+                <li>Max 1 notificação por carrinho</li>
+                <li>Não enviar se já comprou</li>
+            </ul>
+        </div>
+        <div class="card" style="border-top:4px solid var(--blue-accent);">
+            <span class="label label-you">PM define</span>
+            <h3>Cenários de Teste</h3>
+            <ul>
+                <li>Happy: abandona, recebe em 30min</li>
+                <li>Edge: compra em 20min = não recebe</li>
+                <li>Edge: 2 abandonos = 1 push</li>
+                <li>Erro: push fora = retry 5min</li>
+            </ul>
+        </div>
+        <div class="card" style="border-top:4px solid var(--purple);">
+            <span class="label label-ai">Claude executa</span>
+            <h3>Gera</h3>
+            <ul>
+                <li>PRD completo</li>
+                <li>User stories INVEST</li>
+                <li>Critérios de aceitação técnicos</li>
+            </ul>
+        </div>
+        <div class="card" style="border-top:4px solid var(--blue-accent);">
+            <span class="label label-you">PM valida</span>
+            <h3>Revisão</h3>
+            <ul>
+                <li>Confere contra cenários</li>
+                <li>"A IA cobriu o edge case X?"</li>
+                <li>Ajusta e aprova</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 13 - DICA DE OURO -->
+<section class="slide-light">
+    <h2>DICA DE OURO</h2>
+    <p style="font-size:0.85em; margin-bottom:20px;">Revise SEMPRE o caminho que a IA percorreu.</p>
+    <div class="highlight-box" style="font-size:1em; padding:28px;">
+        OS INSIGHTS MAIS VALIOSOS ESTÃO NAS IDEIAS QUE ELA DESCARTOU
+    </div>
+    <p class="small" style="max-width:600px; margin:20px auto;">Peça para a IA mostrar alternativas que considerou e por que descartou. Ali moram oportunidades que ninguém viu.</p>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 4 - PESQUISA -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">04</div>
+    <h1 style="font-size:1.7em;">PESQUISA DE MERCADO</h1>
+    <p class="subtitle">Como o Claude mapeia seu mercado em minutos</p>
+</section>
+
+<!-- SLIDE 15 - NÍVEIS -->
+<section class="slide-light">
+    <h2>PESQUISA COM CLAUDE</h2>
+    <div class="cards">
+        <div class="card blue-border">
+            <h3>Nível 01 - Rápido</h3>
+            <p style="font-weight:600; color:var(--blue-accent);">Claude (chat)</p>
+            <ul>
+                <li>Deep thinking para análise</li>
+                <li>Mapeia temas e concorrentes</li>
+                <li>Gera hipóteses iniciais</li>
+                <li>Gratuito ou $20/mês</li>
+            </ul>
+        </div>
+        <div class="card green-border">
+            <h3>Nível 02 - Profundo</h3>
+            <p style="font-weight:600; color:var(--green);">Claude + MCPs</p>
+            <ul>
+                <li>Busca em tempo real (Brave Search)</li>
+                <li>Navega sites concorrentes (Playwright)</li>
+                <li>Processa dados locais (Desktop Commander)</li>
+                <li>Raciocínio estruturado (Sequential Thinking)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 16 - MCPs -->
+<section class="slide-light">
+    <h2>MCPs ESSENCIAIS</h2>
+    <p class="small">Model Context Protocol: Claude usa ferramentas profissionais</p>
+    <div class="cards">
+        <div class="card blue-border">
+            <h3>Playwright</h3>
+            <p>Claude controla navegador automaticamente. Testa fluxos, extrai dados de concorrentes.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Sequential Thinking</h3>
+            <p>Claude 'pensa em voz alta' antes de responder. Raciocínio completo e validado.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Brave Search</h3>
+            <p>Claude pesquisa a internet em tempo real. Dados atualizados, reviews, tendências.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Desktop Commander</h3>
+            <p>Claude acessa seus arquivos. Processa planilhas, executa scripts, analisa dados.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 17 - CASO REAL -->
+<section class="slide-light">
+    <h2>CASO REAL: MERCADO LIVRE</h2>
+    <div class="cards">
+        <div class="card red-border">
+            <h3>Problema</h3>
+            <p>Concorrência intensa entre ferramentas para perfil de vendedores.</p>
+        </div>
+        <div class="card blue-border">
+            <h3>Solução</h3>
+            <ul>
+                <li>Claude mapeou ecossistema inicial</li>
+                <li>MCP aprofundou: fóruns, reviews, docs</li>
+                <li>Playwright testou interfaces automaticamente</li>
+            </ul>
+        </div>
+        <div class="card green-border">
+            <h3>Resultado</h3>
+            <ul>
+                <li>Descoberta de gaps que ninguém atendia</li>
+                <li>Padrões de reclamação recorrentes identificados</li>
+            </ul>
+        </div>
+    </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 5 - ENTREVISTAS -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">05</div>
+    <h1 style="font-size:1.6em;">ENTREVISTAS SINTÉTICAS</h1>
+    <p class="subtitle">Simule usuários e ganhe hipóteses em minutos</p>
+</section>
+
+<!-- SLIDE 19 - PERSONAS -->
+<section class="slide-light">
+    <h2>PERSONAS SINTÉTICAS COM CLAUDE</h2>
+    <div class="two-col">
+        <div class="col">
+            <div class="card blue-border" style="max-width:100%;">
+                <h3>Por que funcionam</h3>
+                <ul>
+                    <li>Disponíveis 24/7</li>
+                    <li>Exploram cenários extremos</li>
+                    <li>Geram mais hipóteses em menos tempo</li>
+                    <li>Sem viés de conveniência</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card green-border" style="max-width:100%;">
+                <h3>Construção em 5 passos</h3>
+                <ol style="padding-left:18px;">
+                    <li>Desconstrua o produto</li>
+                    <li>Triangulação de contexto</li>
+                    <li>Gere arquétipos hipotéticos</li>
+                    <li>Crie prompt estruturado</li>
+                    <li>Entreviste a persona</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <p class="small" style="margin-top:16px;">Claude Cowork: contexto compartilhado com o time em tempo real</p>
+</section>
+
+<!-- SLIDE 20 - BOAS PERGUNTAS -->
+<section class="slide-light">
+    <h2>FRAMEWORK DE BOAS PERGUNTAS</h2>
+    <div class="cards">
+        <div class="card green-border">
+            <h3 style="color:var(--green)!important;">Fazer</h3>
+            <ul>
+                <li>Aprofundar no porquê:<br><em>"Me conta mais sobre isso.."</em></li>
+                <li>Usar os 5 tipos:<br><em>"O quê? Por quê? Como? Quando? Onde?"</em></li>
+                <li>Basear em fatos:<br><em>"Qual foi a última vez que.."</em></li>
+            </ul>
+        </div>
+        <div class="card red-border">
+            <h3 style="color:var(--red)!important;">Evitar</h3>
+            <ul>
+                <li>Resposta embutida:<br><em>"Você concorda que.."</em></li>
+                <li>Começar fechado:<br><em>Sim/não sem follow-up</em></li>
+                <li>Enviesar com contexto demais:<br><em>Influenciar a resposta</em></li>
+            </ul>
+        </div>
+    </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 6 - DOCUMENTAÇÃO -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">06</div>
+    <h1 style="font-size:1.5em;">DOCUMENTAÇÃO E VALIDAÇÃO</h1>
+    <p class="subtitle">Transformando horas em minutos</p>
+</section>
+
+<!-- SLIDE 22 - ANTES vs DEPOIS -->
+<section class="slide-light">
+    <h2>O SALTO DE PRODUTIVIDADE</h2>
+    <div class="cards">
+        <div class="card red-border">
+            <h3 style="color:var(--red)!important;">Antes</h3>
+            <ul>
+                <li>Ouvir</li>
+                <li>Transcrever</li>
+                <li>Resumir</li>
+                <li>Escrever</li>
+                <li>Atualizar</li>
+            </ul>
+            <p class="small" style="margin-top:12px; text-align:center;"><strong>Horas de trabalho manual</strong></p>
+        </div>
+        <div class="card green-border">
+            <h3 style="color:var(--green)!important;">Com IA + SDD</h3>
+            <ul>
+                <li>IA gera a partir da spec</li>
+                <li>Você valida contra os cenários</li>
+                <li>Ajusta e aprova</li>
+            </ul>
+            <p class="small" style="margin-top:12px; text-align:center;"><strong>90% de economia de tempo</strong></p>
+        </div>
+    </div>
+    <div class="highlight-box">A diferença do SDD: você revisa contra a spec, não no escuro</div>
+</section>
+
+<!-- SLIDE 23 - CLAUDE CODE -->
+<section class="slide-light">
+    <h2>CLAUDE CODE PARA DOCUMENTAÇÃO</h2>
+    <p class="small">User Stories INVEST geradas a partir da spec</p>
+    <div class="two-col">
+        <div class="col">
+            <div class="card blue-border" style="max-width:100%;">
+                <h3>Framework INVEST</h3>
+                <p><strong>I</strong>ndependente<br>
+                <strong>N</strong>egociável<br>
+                <strong>V</strong>alioso<br>
+                <strong>E</strong>stimável<br>
+                <strong>S</strong>mall (pequeno)<br>
+                <strong>T</strong>estável</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card green-border" style="max-width:100%;">
+                <h3>Fluxo com Claude Code</h3>
+                <ol style="padding-left:18px;">
+                    <li>Você escreve a spec no CLAUDE.md</li>
+                    <li>Claude Code gera user stories</li>
+                    <li>Cada story tem critérios de aceitação</li>
+                    <li>Você valida contra cenários</li>
+                    <li>Claude ajusta até aprovar</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <p class="small">Claude Code entende o contexto do projeto inteiro via .md</p>
+</section>
+
+<!-- SLIDE 24 - LOVABLE / OMNIFLOW -->
+<section class="slide-light">
+    <h2>DE SPEC PARA PROTÓTIPO FUNCIONAL</h2>
+    <p class="small">Lovable / Omniflow: de ideia para app funcionando em minutos</p>
+    <div class="two-col">
+        <div class="col">
+            <div class="card blue-border" style="max-width:100%;">
+                <h3>O que fazem</h3>
+                <ul>
+                    <li>Geram apps React completos</li>
+                    <li>Integram com GitHub</li>
+                    <li>Protótipos FUNCIONAIS, não wireframes</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card green-border" style="max-width:100%;">
+                <h3>Por que é divisor de águas</h3>
+                <ul>
+                    <li>Valida ideias SEM engenheiro</li>
+                    <li>Mostra stakeholders app de verdade</li>
+                    <li>Testa hipóteses antes de investir</li>
+                    <li>Reduz discussões abstratas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="highlight-box">Spec (você) &#8594; Claude gera docs &#8594; Lovable gera protótipo &#8594; Você valida</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- BLOCO 7 - PRIORIZAÇÃO -->
+<!-- ============================================================ -->
+<section class="slide-dark">
+    <div class="num">07</div>
+    <h1 style="font-size:1.5em;">PRIORIZAÇÃO INTELIGENTE</h1>
+    <p class="subtitle">Da lista infinita ao processo estratégico</p>
+</section>
+
+<!-- SLIDE 26 - CASE LOGBIT -->
+<section class="slide-light">
+    <h2>CASE LOGBIT: A PERGUNTA CERTA</h2>
+    <div class="cards">
+        <div class="card red-border">
+            <h3 style="color:var(--red)!important;">Errada</h3>
+            <p style="font-size:1em; font-weight:600; text-align:center; padding:16px 0;">"Qual card puxar primeiro?"</p>
+        </div>
+        <div class="card green-border">
+            <h3 style="color:var(--green)!important;">Certa</h3>
+            <p style="font-size:1em; font-weight:600; text-align:center; padding:16px 0;">"Quais cards valem a pena <u>EXISTIR</u>?"</p>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <p style="font-weight:600;">Resultado Real</p>
+        <p class="small">A IA virou um espelho da estratégia da companhia</p>
+        <p class="small"><strong>ANTES:</strong> Lista infinita de desejos &nbsp;&nbsp;|&nbsp;&nbsp; <strong>DEPOIS:</strong> Processo conectando time + cliente + negócio</p>
+    </div>
+</section>
+
+<!-- SLIDE 27 - PRIORIZAÇÃO 3 FASES -->
+<section class="slide-light">
+    <h2>PRIORIZAÇÃO COM CLAUDE</h2>
+    <div class="cards" style="align-items:stretch;">
+        <div class="card blue-border">
+            <h3>Fase 01: Health Check</h3>
+            <ul>
+                <li>Claude analisa backlog completo</li>
+                <li>Classifica demandas por tipo</li>
+                <li>Avaliação de complexidade técnica</li>
+                <li>Score de saúde do backlog</li>
+            </ul>
+        </div>
+        <div class="card blue-border">
+            <h3>Fase 02: Estratégia</h3>
+            <ul>
+                <li>Conecta demandas com OKRs</li>
+                <li>Alinha com estratégia do negócio</li>
+                <li>Score integrado de priorização</li>
+                <li>"Isso move qual métrica?"</li>
+            </ul>
+        </div>
+        <div class="card blue-border">
+            <h3>Fase 03: Validação</h3>
+            <ul>
+                <li>Lovable/Omniflow gera protótipo</li>
+                <li>Playwright testa fluxos</li>
+                <li>Complexidade REAL estimada</li>
+                <li>Decide com evidência</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- FECHAMENTO -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 28 - STACK + ROI -->
+<section class="slide-light">
+    <h2>STACK ESSENCIAL + ROI</h2>
+    <div class="two-col" style="align-items:stretch;">
+        <div class="col">
+            <div class="card blue-border" style="max-width:100%;">
+                <h3>Ecossistema Claude</h3>
+                <ul>
+                    <li><strong>Claude Pro</strong> - $20/mês<br><span class="smaller">Pesquisa, entrevistas, priorização</span></li>
+                    <li><strong>Claude Code</strong> - incluso<br><span class="smaller">Documentação, user stories, specs</span></li>
+                    <li><strong>Claude Cowork</strong> - incluso<br><span class="smaller">Colaboração em tempo real</span></li>
+                </ul>
+                <h3 style="margin-top:14px;">Prototipagem</h3>
+                <ul>
+                    <li><strong>Lovable</strong> - $20/mês</li>
+                    <li><strong>Omniflow</strong> - alternativa</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="roi-box">
+                <p class="small" style="margin:0;">ROI Real por Sprint</p>
+                <p class="roi-big">73h &#8594; 8h</p>
+                <p style="font-weight:600; font-size:0.8em;">65 horas economizadas</p>
+                <hr style="border:none; border-top:1px solid #eee; margin:12px 0;">
+                <p class="roi-detail">Pesquisa: 15h &#8594; 2h</p>
+                <p class="roi-detail">Entrevistas: 8h &#8594; 1h</p>
+                <p class="roi-detail">Documentação: 10h &#8594; 45min</p>
+                <p class="roi-detail">Prototipagem: 40h &#8594; 4h</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 29 - O QUE SOBRA -->
+<section class="slide-light">
+    <h2>O QUE SOBRA DEPOIS DA IA?</h2>
+    <p style="font-weight:600; font-size:0.85em; text-decoration:underline;">TEMPO + CLAREZA</p>
+    <p class="small">Para focar no que máquina não faz:</p>
+    <div class="question-list" style="max-width:600px;">
+        <div class="question-item">Decisões estratégicas (IA sugere, <strong>você decide</strong>)</div>
+        <div class="question-item">Construir <strong>confiança</strong> com stakeholders</div>
+        <div class="question-item"><strong>Visão de produto</strong> e intuição de mercado</div>
+        <div class="question-item"><strong>Liderança</strong> e alinhamento de time</div>
+    </div>
+</section>
+
+<!-- SLIDE 30 - PLANO DE AÇÃO -->
+<section class="slide-light">
+    <h2>SEU PLANO DE AÇÃO</h2>
+    <p class="small">Comece pequeno, expanda depois</p>
+    <div class="timeline">
+        <div class="timeline-item">
+            <h4>Semana 1</h4>
+            <h3>Fundação</h3>
+            <ul>
+                <li>Crie seu CLAUDE.md</li>
+                <li>Instale Claude + MCP Brave Search</li>
+                <li>Faça uma pesquisa real</li>
+            </ul>
+        </div>
+        <div class="timeline-item">
+            <h4>Semana 2</h4>
+            <h3>Experimentação</h3>
+            <ul>
+                <li>Crie persona sintética</li>
+                <li>Use framework de perguntas</li>
+                <li>Compare com entrevistas reais</li>
+            </ul>
+        </div>
+        <div class="timeline-item">
+            <h4>Semana 3</h4>
+            <h3>Metodologia</h3>
+            <ul>
+                <li>Aplique SDD em 1 feature</li>
+                <li>Gere stories com Claude Code</li>
+                <li>Valide com Lovable</li>
+            </ul>
+        </div>
+        <div class="timeline-item">
+            <h4>Semana 4</h4>
+            <h3>Medição</h3>
+            <ul>
+                <li>Meça tempo economizado</li>
+                <li>Compartilhe com o time</li>
+                <li>Expanda para mais features</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 31 - ENCERRAMENTO -->
+<section class="slide-dark">
+    <p style="font-size:0.8em; opacity:0.7; font-weight:300;">IA não vai substituir PMs.</p>
+    <h1 style="font-size:1.6em; font-weight:400; margin:10px 0 30px;">Mas PMs que usam IA vão substituir os que não usam.</h1>
+    <hr style="border:none; border-top:2px solid rgba(255,255,255,0.3); width:40%; margin:30px auto;">
+    <p style="font-size:0.7em; opacity:0.7;">A pergunta não é "devo usar IA?"</p>
+    <p style="font-size:1em; font-weight:500; margin-top:8px;">É: "Por que ainda não comecei?"</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.min.js"></script>
+<script>
+    Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        width: 1280,
+        height: 720,
+        margin: 0.08,
+        transition: 'slide',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        center: true,
+        controls: true,
+        progress: true,
+        history: true,
+    });
+</script>
+</body>
+</html>
