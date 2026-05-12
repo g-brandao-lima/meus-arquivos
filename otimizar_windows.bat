@@ -2,6 +2,7 @@
 :: =============================================================================
 :: OTIMIZACAO WINDOWS 11 - Gustavo Brandao
 :: Baseado nas configuracoes coletadas em 05/04/2026
+:: Atualizado em 12/05/2026: UAC, telemetria extra, widgets, hidden files
 :: Rodar como ADMINISTRADOR
 :: =============================================================================
 
@@ -22,7 +23,7 @@ echo.
 :: =============================================================================
 :: 1. SERVICOS - Desativar servicos desnecessarios
 :: =============================================================================
-echo [1/8] Desativando servicos desnecessarios...
+echo [1/10] Desativando servicos desnecessarios...
 
 :: Telemetria Microsoft (coleta de dados de uso)
 sc config DiagTrack start= disabled >nul 2>&1
@@ -102,9 +103,34 @@ echo   [OK] Servicos configurados
 echo.
 
 :: =============================================================================
-:: 2. PRIVACIDADE - Desativar coleta de dados e anuncios
+:: 2. UAC - Desativar prompts de elevacao (User Account Control)
 :: =============================================================================
-echo [2/8] Configurando privacidade...
+:: ATENCAO: desativar UAC reduz uma camada de defesa contra malware que tenta
+:: elevar privilegios sozinho. Alguns apps da Store podem ter problemas com
+:: EnableLUA=0. Faca isso conscientemente em maquina pessoal/controlada.
+:: Requer REINICIO para EnableLUA ter efeito completo.
+:: =============================================================================
+echo [2/10] Desativando UAC (User Account Control)...
+
+:: Desliga o UAC por completo (requer reboot)
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f >nul 2>&1
+echo   - EnableLUA: desativado (efetivo apos reboot)
+
+:: Admin eleva sem perguntar
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 0 /f >nul 2>&1
+echo   - ConsentPromptBehaviorAdmin: sem prompt
+
+:: Sem tela escura de "secure desktop"
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v PromptOnSecureDesktop /t REG_DWORD /d 0 /f >nul 2>&1
+echo   - PromptOnSecureDesktop: desativado
+
+echo   [OK] UAC desativado
+echo.
+
+:: =============================================================================
+:: 3. PRIVACIDADE - Desativar coleta de dados e anuncios
+:: =============================================================================
+echo [3/10] Configurando privacidade...
 
 :: Desativar ID de publicidade
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" /v Enabled /t REG_DWORD /d 0 /f >nul 2>&1
@@ -130,21 +156,24 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" 
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-353698Enabled /t REG_DWORD /d 0 /f >nul 2>&1
 echo   - Sugestoes e dicas do Windows: desativadas
 
-:: Desativar Bing no menu Iniciar
+:: Desativar Bing/sugestoes na busca do menu Iniciar
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /t REG_DWORD /d 0 /f >nul 2>&1
-echo   - Bing na busca do menu Iniciar: desativado
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /t REG_DWORD /d 0 /f >nul 2>&1
+reg add "HKCU\Software\Policies\Microsoft\Windows\Explorer" /v DisableSearchBoxSuggestions /t REG_DWORD /d 1 /f >nul 2>&1
+echo   - Bing/Cortana/sugestoes na busca: desativados
 
-:: Telemetria nivel minimo
+:: Telemetria nivel minimo (dois caminhos pra garantir aplicacao)
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f >nul 2>&1
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f >nul 2>&1
 echo   - Telemetria: nivel minimo
 
 echo   [OK] Privacidade configurada
 echo.
 
 :: =============================================================================
-:: 3. INTERFACE - Limpar taskbar e explorer
+:: 4. INTERFACE - Limpar taskbar e explorer
 :: =============================================================================
-echo [3/8] Otimizando interface...
+echo [4/10] Otimizando interface...
 
 :: Desativar animacoes da taskbar
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarAnimations /t REG_DWORD /d 0 /f >nul 2>&1
@@ -166,9 +195,18 @@ echo   - Data na taskbar: escondida
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0 /f >nul 2>&1
 echo   - Extensoes de arquivo: visiveis
 
+:: Mostrar arquivos ocultos (uteis pra dev: .env, .git, etc.)
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden /t REG_DWORD /d 1 /f >nul 2>&1
+echo   - Arquivos ocultos: visiveis
+
 :: Esconder barra de pesquisa (so icone ou nada)
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v SearchboxTaskbarMode /t REG_DWORD /d 0 /f >nul 2>&1
 echo   - Barra de pesquisa: escondida
+
+:: Desativar Widgets/Noticias na taskbar
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f >nul 2>&1
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarDa /t REG_DWORD /d 0 /f >nul 2>&1
+echo   - Widgets/Noticias: desativados
 
 :: Efeitos visuais customizados
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 3 /f >nul 2>&1
@@ -183,9 +221,9 @@ echo   [OK] Interface configurada
 echo.
 
 :: =============================================================================
-:: 4. GAMING - Desativar Game Bar/DVR (mantem Game Mode)
+:: 5. GAMING - Desativar Game Bar/DVR (mantem Game Mode)
 :: =============================================================================
-echo [4/8] Configurando gaming...
+echo [5/10] Configurando gaming...
 
 :: Desativar Game DVR (gravacao em background)
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR" /v AppCaptureEnabled /t REG_DWORD /d 0 /f >nul 2>&1
@@ -200,9 +238,9 @@ echo   [OK] Gaming configurado
 echo.
 
 :: =============================================================================
-:: 5. ENERGIA - Plano de alto desempenho
+:: 6. ENERGIA - Plano de alto desempenho
 :: =============================================================================
-echo [5/8] Configurando energia...
+echo [6/10] Configurando energia...
 
 :: Ativar plano Alto Desempenho
 powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c >nul 2>&1
@@ -216,9 +254,9 @@ echo   [OK] Energia configurada
 echo.
 
 :: =============================================================================
-:: 6. BLOATWARE - Remover apps pre-instalados
+:: 7. BLOATWARE - Remover apps pre-instalados
 :: =============================================================================
-echo [6/8] Removendo bloatware...
+echo [7/10] Removendo bloatware...
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$apps = @('Microsoft.GetHelp','MicrosoftCorporationII.QuickAssist','Microsoft.MicrosoftOfficeHub','Microsoft.BingNews','Microsoft.BingWeather','Microsoft.MicrosoftSolitaireCollection','Microsoft.MixedReality.Portal','Microsoft.People','Microsoft.Print3D','Microsoft.SkypeApp','Microsoft.WindowsMaps','Microsoft.ZuneMusic','Microsoft.ZuneVideo','Clipchamp.Clipchamp','Microsoft.549981C3F5F10','Microsoft.YourPhone','MicrosoftTeams','Microsoft.Getstarted'); foreach ($a in $apps) { Get-AppxPackage -Name *$a* -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue; if ($?) { Write-Host ('  - {0}: removido' -f $a) } }"
@@ -227,9 +265,9 @@ echo   [OK] Bloatware removido
 echo.
 
 :: =============================================================================
-:: 7. STARTUP - Limpar itens de inicializacao
+:: 8. STARTUP - Limpar itens de inicializacao
 :: =============================================================================
-echo [7/8] Limpando startup...
+echo [8/10] Limpando startup...
 
 :: Remover iTunesHelper (se existir)
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v iTunesHelper /f >nul 2>&1
@@ -247,9 +285,9 @@ echo   [OK] Startup limpo
 echo.
 
 :: =============================================================================
-:: 8. LIMPEZA - Arquivos temporarios
+:: 9. LIMPEZA - Arquivos temporarios
 :: =============================================================================
-echo [8/8] Limpando arquivos temporarios...
+echo [9/10] Limpando arquivos temporarios...
 
 :: Limpar temp do usuario (arquivos com +30 dias)
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
@@ -267,11 +305,23 @@ echo   [OK] Limpeza concluida
 echo.
 
 :: =============================================================================
+:: 10. APLICAR - Reiniciar Explorer para refletir mudancas visuais
+:: =============================================================================
+echo [10/10] Reiniciando Explorer para aplicar mudancas visuais...
+taskkill /f /im explorer.exe >nul 2>&1
+start explorer.exe
+echo   [OK] Explorer reiniciado
+echo.
+
+:: =============================================================================
 :: FINALIZADO
 :: =============================================================================
 echo ============================================
 echo   OTIMIZACAO CONCLUIDA!
 echo ============================================
+echo.
+echo   IMPORTANTE: REINICIE o computador para o UAC
+echo   ficar totalmente desativado (EnableLUA=0).
 echo.
 echo   Recomendacoes pos-execucao:
 echo   - Reinicie o computador para aplicar tudo

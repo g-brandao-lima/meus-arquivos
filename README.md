@@ -1,6 +1,6 @@
 # Config Windows Otimizado
 
-Script `.bat` para otimizar o Windows 11 em uma unica execucao. Remove bloatware, desativa servicos desnecessarios, configura privacidade e limpa arquivos temporarios.
+Script `.bat` para otimizar o Windows 11 em uma unica execucao. Remove bloatware, desativa servicos desnecessarios, desliga o UAC, configura privacidade e limpa arquivos temporarios.
 
 Testado no Windows 11 Pro (build 26200+).
 
@@ -50,7 +50,19 @@ Servicos do Windows que rodam em background consumindo RAM e CPU sem necessidade
 | XboxNetApiSvc | Rede Xbox Live | Se nao joga online via Xbox |
 | WbioSrvc | Leitura biometrica (digital, facial) | Se nao usa Windows Hello |
 
-### 2. Privacidade
+### 2. UAC (User Account Control)
+
+Aquele prompt chato que aparece toda vez que voce clica em algo que precisa de admin. O script desliga ele por completo.
+
+| Configuracao | O que faz |
+|--------------|-----------|
+| **EnableLUA = 0** | Desliga o UAC completamente. Apps rodando como admin nao mostram mais prompt. Requer reiniciar |
+| **ConsentPromptBehaviorAdmin = 0** | Quando o UAC ainda esta ativo, faz contas admin elevarem sem perguntar |
+| **PromptOnSecureDesktop = 0** | Remove aquela tela escura que congela tudo enquanto pergunta |
+
+> **Atencao:** desativar o UAC reduz uma camada de defesa contra malware que tenta elevar privilegios sozinho. Alguns apps da Microsoft Store podem ter problemas quando `EnableLUA=0`. Faca conscientemente em maquina pessoal/controlada. Para reativar, troque os tres valores para `1` e reinicie.
+
+### 3. Privacidade
 
 Configuracoes de registro que controlam o que o Windows coleta e exibe.
 
@@ -61,10 +73,10 @@ Configuracoes de registro que controlam o que o Windows coleta e exibe.
 | **Notificacoes toast** | Popups de notificacao no canto da tela | Distraem e consomem recursos do sistema de notificacao |
 | **Instalacao silenciosa de apps** | O Windows instala apps "sugeridos" sozinho (Candy Crush, Spotify, etc) | Voce abre o menu Iniciar e tem apps que nunca instalou. E isso |
 | **Sugestoes e dicas** | Dicas do Windows que aparecem na tela de bloqueio e no Iniciar | Anuncios disfarados de "dicas". Consome recursos pra exibir conteudo promocional |
-| **Bing no Iniciar** | Busca do menu Iniciar envia suas pesquisas pro Bing | Voce quer achar um programa local, nao fazer busca na internet |
-| **Telemetria (nivel minimo)** | Quantidade de dados de uso enviados a Microsoft | O nivel padrao envia dados detalhados. O minimo envia so o essencial pro Windows funcionar |
+| **Bing/Cortana/sugestoes na busca** | Busca do menu Iniciar envia suas pesquisas pro Bing e mostra sugestoes online | Voce quer achar um programa local, nao fazer busca na internet |
+| **Telemetria (nivel minimo)** | Quantidade de dados de uso enviados a Microsoft. Aplicado em dois caminhos de registro pra garantir efeito | O nivel padrao envia dados detalhados. O minimo envia so o essencial pro Windows funcionar |
 
-### 3. Interface
+### 4. Interface
 
 Ajustes visuais na taskbar e Explorer para um desktop mais limpo.
 
@@ -75,25 +87,27 @@ Ajustes visuais na taskbar e Explorer para um desktop mais limpo.
 | **Botao Copilot** | Remove o botao do Copilot da taskbar |
 | **Data na taskbar** | Esconde a data no relogio (so hora). Mais espaco na taskbar |
 | **Extensoes de arquivo** | Mostra `.pdf`, `.exe`, `.txt` nos nomes de arquivo. Essencial pra quem trabalha com arquivos |
+| **Arquivos ocultos** | Mostra arquivos e pastas ocultos no Explorer (`.env`, `.git`, AppData, etc.) |
 | **Barra de pesquisa** | Remove a barra de pesquisa da taskbar (Win+S continua funcionando) |
+| **Widgets/Noticias** | Remove o painel de widgets e noticias da taskbar via politica |
 | **Efeitos visuais** | Modo customizado - mantem os efeitos uteis, remove os cosmeticos |
 | **Tema escuro** | Ativa tema escuro no sistema e apps. Menos cansaco visual |
 
-### 4. Gaming
+### 5. Gaming
 
 | Configuracao | O que faz | Por que desativar |
 |--------------|-----------|-------------------|
 | **Game DVR** | Grava gameplay em background o tempo todo, mesmo sem voce pedir | Consome CPU, GPU e disco constantemente. Se quiser gravar, use OBS |
 | **Game Mode automatico** | Detecta jogos e altera prioridade de processos | Pode causar instabilidade em alguns jogos. Melhor gerenciar manualmente |
 
-### 5. Energia
+### 6. Energia
 
 | Configuracao | O que faz |
 |--------------|-----------|
 | **Alto Desempenho** | Plano de energia que prioriza performance em vez de economia. CPU roda na frequencia maxima |
 | **Hibernacao desativada** | Remove o arquivo `hiberfil.sys` (~12GB no SSD). Hibernacao salva o estado da RAM no disco pra retomar depois - se voce so desliga/liga o PC, nao precisa |
 
-### 6. Bloatware removido
+### 7. Bloatware removido
 
 Apps pre-instalados que vem com o Windows e quase ninguem usa.
 
@@ -118,7 +132,7 @@ Apps pre-instalados que vem com o Windows e quase ninguem usa.
 | **Teams (consumer)** | Versao pessoal do Teams | Se ja usa Teams pelo trabalho, essa versao pessoal duplica processos |
 | **Get Started** | Tutorial de boas-vindas do Windows | Voce ja sabe usar o Windows |
 
-### 7. Startup limpo
+### 8. Startup limpo
 
 Programas removidos da inicializacao automatica.
 
@@ -128,13 +142,19 @@ Programas removidos da inicializacao automatica.
 | **LGHUB** | Logitech G Hub - gerencia perfis de periferico. So precisa se troca perfis frequentemente. Abra na mao quando precisar |
 | **TRIGGERcmd Agent** | Permite controle remoto do PC via web/Alexa. Se nao usa, e um processo a toa |
 
-### 8. Limpeza
+### 9. Limpeza
 
 | Acao | O que limpa |
 |------|-------------|
 | **Temp do usuario** | Arquivos temporarios com mais de 30 dias. Caches expirados, logs antigos, instaladores usados |
 | **Temp do Windows** | Arquivos temporarios do sistema |
 | **Lixeira** | Esvazia completamente |
+
+### 10. Aplicar mudancas
+
+| Acao | O que faz |
+|------|-----------|
+| **Reiniciar Explorer** | Mata e reinicia o `explorer.exe` pra refletir mudancas visuais (taskbar, tema, arquivos ocultos) sem precisar logoff |
 
 ---
 
@@ -162,6 +182,13 @@ sc start DiagTrack
 ```
 
 **Registro:** Troque `/d 0` por `/d 1` (ou vice-versa) no comando `reg add` correspondente.
+
+**UAC:** Para reativar, troque os tres valores da secao 2 para `1` e reinicie:
+```bat
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 5 /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v PromptOnSecureDesktop /t REG_DWORD /d 1 /f
+```
 
 **Bloatware:** Reinstale pela Microsoft Store.
 
